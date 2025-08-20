@@ -9,12 +9,12 @@ load_dotenv()
 
 def read_prompt_file():
     """Read the prompt from prompt.md file."""
-    prompt_file = Path("../data_processing/prompt.md")
+    prompt_file = Path("prompt.md")
     if prompt_file.exists():
         with open(prompt_file, 'r', encoding='utf-8') as f:
             return f.read()
     else:
-        raise FileNotFoundError("prompt.md file not found in data_processing directory")
+        raise FileNotFoundError("prompt.md file not found in data_grouping directory")
 
 def collect_image_metadata():
     """Collect all processed images and their metadata."""
