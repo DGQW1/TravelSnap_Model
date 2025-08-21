@@ -27,17 +27,17 @@ pip install -r requirements.txt
 
 ### Process all images in the current directory:
 ```bash
-python data_processing/preprocessing.py
+python preprocessing.py
 ```
 
 ### Process all images in a specific directory:
 ```bash
-python data_processing/preprocessing.py --input /path/to/images
+python preprocessing.py --input /path/to/images
 ```
 
 ### Process a single image:
 ```bash
-python data_processing/preprocessing.py --single --input image.heic
+python preprocessing.py --single --input image.heic
 ```
 
 ## Output Structure
@@ -49,15 +49,19 @@ Processed files are saved to two directories:
 ### Example JSON Output
 ```json
 {
-  "original_filename": "IMG_1234.heic",
-  "original_format": "HEIF",
-  "datetime_taken": "2024-01-15T14:30:25",
+  "original_filename": "IMG_5634.jpeg",
+  "original_format": "JPEG",
+  "datetime_taken": "2025-03-21T15:55:09",
   "gps_coordinates": {
-    "latitude": 37.7749,
-    "longitude": -122.4194
+    "latitude": 36.56995277777778,
+    "longitude": -121.94960833333333
   },
-  "image_size": [4032, 3024],
-  "processing_timestamp": "2024-01-20T10:15:30.123456"
+  "image_size": [
+    3024,
+    4032
+  ],
+  "processing_timestamp": "2025-08-20T22:58:25.054882",
+  "site_name": "1700 17 Mile Dr, Pebble Beach, CA 93953, USA"
 }
 ```
 

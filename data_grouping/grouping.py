@@ -14,7 +14,7 @@ def read_prompt_file():
         with open(prompt_file, 'r', encoding='utf-8') as f:
             return f.read()
     else:
-        raise FileNotFoundError("prompt.md file not found in data_grouping directory")
+        raise FileNotFoundError("prompt.md file not found in the current directory")
 
 def collect_image_metadata():
     """Collect all processed images and their metadata."""
@@ -70,6 +70,9 @@ def group_images_with_qwen(image_data, prompt):
             if metadata.get('gps_coordinates'):
                 coords = metadata['gps_coordinates']
                 info_text += f"GPS坐标: 纬度{coords['latitude']:.6f}, 经度{coords['longitude']:.6f}\n"
+            
+            if metadata.get('site_name'):
+                info_text += f"地点: {metadata['site_name']}\n"
             
             if metadata.get('original_format'):
                 info_text += f"原始格式: {metadata['original_format']}\n"
