@@ -81,6 +81,10 @@ class PhotoViewer:
         self.location_label = ttk.Label(info_frame, text="", font=("Arial", 10, "bold"))
         self.location_label.grid(row=0, column=1, sticky=tk.W)
         
+        # Add next location button
+        ttk.Button(info_frame, text="Next Location", 
+                  command=self.next_group).grid(row=0, column=2, sticky=tk.W, padx=(10, 0))
+         
         ttk.Label(info_frame, text="Time:").grid(row=1, column=0, sticky=tk.W, padx=(0, 10))
         self.time_label = ttk.Label(info_frame, text="")
         self.time_label.grid(row=1, column=1, sticky=tk.W)
@@ -196,6 +200,58 @@ class PhotoViewer:
                 self.image_label.config(image="", text=f"Error loading image: {e}")
         else:
             self.image_label.config(image="", text=f"Image not found: {photo_filename}")
+    
+    def change_location(self):
+        """Change the location for the current group"""
+        if not self.photo_groups:
+            return
+            
+        # Create a simple dialog for input
+        dialog = tk.Toplevel(self.root)
+        dialog.title("Change Location")
+        dialog.geometry("400x150")
+        dialog.transient(self.root)
+        dialog.grab_set()
+        
+        # Center the dialog
+        dialog.geometry("+%d+%d" % (self.root.winfo_rootx() + 50, self.root.winfo_rooty() + 50))
+        
+        # Current location
+        current_location = self.photo_groups[self.current_group_index].get("景点名称", "")
+        
+        ttk.Label(dialog, text="Current Location:").pack(pady=(10, 5))
+        ttk.Label(dialog, text=current_location, font=("Arial", 10, "bold")).pack(pady=(0, 10))
+        
+        ttk.Label(dialog, text="New Location:").pack(pady=(5, 5))
+        entry = ttk.Entry(dialog, width=40)
+        entry.pack(pady=(0, 10))
+        entry.insert(0, current_location)
+        entry.select_range(0, tk.END)
+        entry.focus()
+        
+        # Buttons
+        button_frame = ttk.Frame(dialog)
+        button_frame.pack(pady=(10, 0))
+        
+        def save_location():
+            new_location = entry.get().strip()
+            if new_location:
+                self.photo_groups[self.current_group_index]["景点名称"] = new_location
+                self.update_display()
+                dialog.destroy()
+                messagebox.showinfo("Success", f"Location changed to: {new_location}")
+            else:
+                messagebox.showerror("Error", "Location cannot be empty")
+        
+        def cancel():
+            dialog.destroy()
+        
+        ttk.Button(button_frame, text="Save", command=save_location).pack(side=tk.LEFT, padx=(0, 10))
+        ttk.Button(button_frame, text="Cancel", command=cancel).pack(side=tk.LEFT)
+        
+        # Bind Enter key to save
+        entry.bind('<Return>', lambda e: save_location())
+        entry.bind('<Escape>', lambda e: cancel())
     
     def clear_display(self):
         """Clear the display"""
