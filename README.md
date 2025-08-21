@@ -25,20 +25,62 @@ pip install -r requirements.txt
 
 ## Usage
 
-### Process all images in the current directory:
+### Preprocessing
+
+#### Process all images in the current directory:
 ```bash
 python preprocessing.py
 ```
 
-### Process all images in a specific directory:
+#### Process all images in a specific directory:
 ```bash
 python preprocessing.py --input /path/to/images
 ```
 
-### Process a single image:
+#### Process a single image:
 ```bash
 python preprocessing.py --single --input image.heic
 ```
+
+#### Grouping Images by Location and Generating Summaries
+
+1. **Run the grouping script:**
+   ```bash
+   python data_grouping/grouping.py
+   ```
+   This will analyze all processed images in `src/processed/img/` and their metadata in `src/processed/info/`, then group them by location and content.
+
+2. **Output:**
+   - The results are saved as `src/results/photo_groups.json`.
+   - Each group contains:
+     - The name of the location (if identifiable)
+     - A list of photo filenames belonging to that location
+     - The time range when the photos were taken
+     - A brief, objective summary describing the site and the visit
+
+      **Example Output:**
+
+     ```json
+      [
+        {
+          "景点名称": "斯坦福大学",
+          "照片": ["IMG_6001.jpg", "IMG_6002.jpg"],
+          "时间": "10:00 - 11:30",
+          "总结": "美国著名大学，校园宽阔，建筑风格多样，绿化良好，适合散步和参观"
+        }
+      ]
+      ```
+
+4. **Use the photo viewer to preview grouped photos for testing:**
+   ```bash
+   python data_grouping/photo_viewer.py
+   ```
+   This will open a GUI to browse your grouped photos and view their metadata.
+
+See `data_grouping/prompt.md` for more details on the grouping logic and output format.
+
+
+
 
 ## Output Structure
 
