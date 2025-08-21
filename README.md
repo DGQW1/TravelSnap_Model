@@ -12,8 +12,13 @@ This script automatically converts images of different formats (PNG, JPEG, HEIC)
 - **Batch Processing**: Can process entire directories or single images
 
 ## Installation
+1. Create a conda env
+```bash
+conda create --name travelsnapimg python=3.11
+conda activate travelSnapImg
+```
 
-1. Install the required dependencies:
+2. Install the required dependencies:
 ```bash
 pip install -r requirements.txt
 ```

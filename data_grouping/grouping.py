@@ -133,10 +133,10 @@ def save_grouping_results(results, results_dir):
 def main():
     """Main function to process images and group them."""
     try:
-        print("🔍 Reading prompt...")
+        print("Reading prompt...")
         prompt = read_prompt_file()
         
-        print("📁 Collecting image metadata...")
+        print("Collecting image metadata...")
         image_data = collect_image_metadata()
         print(f"Found {len(image_data)} images with metadata")
         
@@ -144,19 +144,19 @@ def main():
             print("No images found to process!")
             return
         
-        print("🤖 Grouping images with Qwen...")
+        print("Grouping images with Qwen...")
         results = group_images_with_qwen(image_data, prompt)
         
         if results:
-            print("💾 Saving results...")
+            print("Saving results...")
             results_dir = create_results_directory()
             save_grouping_results(results, results_dir)
-            print("✅ Processing complete!")
+            print("Processing complete!")
         else:
-            print("❌ Failed to get results from Qwen")
+            print("Failed to get results from Qwen")
             
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"Error: {e}")
 
 if __name__ == "__main__":
     main()
