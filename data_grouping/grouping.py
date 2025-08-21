@@ -14,7 +14,7 @@ def read_prompt_file():
         with open(prompt_file, 'r', encoding='utf-8') as f:
             return f.read()
     else:
-        raise FileNotFoundError("prompt.md file not found in data_grouping directory")
+        raise FileNotFoundError("prompt.md file not found in the current directory")
 
 def collect_image_metadata():
     """Collect all processed images and their metadata."""
@@ -70,6 +70,9 @@ def group_images_with_qwen(image_data, prompt):
             if metadata.get('gps_coordinates'):
                 coords = metadata['gps_coordinates']
                 info_text += f"GPS坐标: 纬度{coords['latitude']:.6f}, 经度{coords['longitude']:.6f}\n"
+            
+            if metadata.get('site_name'):
+                info_text += f"地点: {metadata['site_name']}\n"
             
             if metadata.get('original_format'):
                 info_text += f"原始格式: {metadata['original_format']}\n"
@@ -133,10 +136,10 @@ def save_grouping_results(results, results_dir):
 def main():
     """Main function to process images and group them."""
     try:
-        print("🔍 Reading prompt...")
+        print("Reading prompt...")
         prompt = read_prompt_file()
         
-        print("📁 Collecting image metadata...")
+        print("Collecting image metadata...")
         image_data = collect_image_metadata()
         print(f"Found {len(image_data)} images with metadata")
         
@@ -144,19 +147,19 @@ def main():
             print("No images found to process!")
             return
         
-        print("🤖 Grouping images with Qwen...")
+        print("Grouping images with Qwen...")
         results = group_images_with_qwen(image_data, prompt)
         
         if results:
-            print("💾 Saving results...")
+            print("Saving results...")
             results_dir = create_results_directory()
             save_grouping_results(results, results_dir)
-            print("✅ Processing complete!")
+            print("Processing complete!")
         else:
-            print("❌ Failed to get results from Qwen")
+            print("Failed to get results from Qwen")
             
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"Error: {e}")
 
 if __name__ == "__main__":
     main()

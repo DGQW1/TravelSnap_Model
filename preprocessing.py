@@ -1,11 +1,18 @@
 import os
 import json
 import shutil
+import glob
+import googlemaps
 from PIL import Image, ExifTags
 from PIL.ExifTags import TAGS, GPSTAGS
 from pathlib import Path
 from datetime import datetime
 import pillow_heif
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
 
 # Register HEIF opener with Pillow
 pillow_heif.register_heif_opener()
@@ -104,6 +111,37 @@ def extract_exif_data(image_path):
     except Exception as e:
         print(f"Error extracting EXIF data from {image_path}: {e}")
         return {}
+    
+def get_site_name(gps_coords):
+    """
+    Get the site name using Google Maps reverse geocoding.
+    
+    Args:
+        gps_coords (dict): Dictionary containing 'latitude' and 'longitude' keys
+    
+    Returns:
+        str: Site name/address or None if unavailable
+    """
+    if not gps_coords or 'latitude' not in gps_coords or 'longitude' not in gps_coords:
+        return None
+    
+    GOOGLE_MAPS_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
+    if not GOOGLE_MAPS_API_KEY:
+        print("Warning: GOOGLE_MAPS_API_KEY environment variable not set. Skipping site name lookup.")
+        return None
+    
+    try:
+        gmaps_client = googlemaps.Client(key=GOOGLE_MAPS_API_KEY)
+        result = gmaps_client.reverse_geocode(
+            (gps_coords['latitude'], gps_coords['longitude']), 
+            language='en'
+        )
+        if result and len(result) > 0:
+            return result[0]['formatted_address']
+        return None
+    except Exception as e:
+        print(f"Warning: Error getting site name from Google Maps: {e}")
+        return None
 
 def convert_image_to_jpg(input_path, img_dir, info_dir, quality=95):
     """
@@ -127,6 +165,7 @@ def convert_image_to_jpg(input_path, img_dir, info_dir, quality=95):
             # Get GPS coordinates and datetime
             gps_coords = get_gps_coordinates(exif_data)
             datetime_taken = get_datetime_from_exif(exif_data)
+            site_name = get_site_name(gps_coords)
             
             # Create metadata dictionary
             metadata = {
@@ -137,6 +176,10 @@ def convert_image_to_jpg(input_path, img_dir, info_dir, quality=95):
                 "image_size": img.size,
                 "processing_timestamp": datetime.now().isoformat()
             }
+            
+            # Only add site_name if it's available
+            if site_name:
+                metadata["site_name"] = site_name
             
             # Convert to RGB if necessary (for PNG with transparency, etc.)
             if img.mode in ('RGBA', 'LA', 'P'):
@@ -219,6 +262,8 @@ def process_images(input_directory=".", supported_formats=None):
                     print(f"  ✓ GPS: {metadata['gps_coordinates']}")
                 if metadata['datetime_taken']:
                     print(f"  ✓ Date: {metadata['datetime_taken']}")
+                if metadata['site_name']:
+                    print(f"  ✓ Site Name: {metadata['site_name']}")
                 print(f"  ✓ Metadata saved to: {file_path.stem}.json")
             else:
                 error_count += 1
